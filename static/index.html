@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureText Encryption System - Cybersecurity Cryptography Dashboard</title>
+    <meta name="description" content="A premium cybersecurity platform for text encryption and decryption using AES, DES, and RSA. Log and track encryption operations securely.">
+    <!-- Google Fonts: Orbitron (headers), Inter (body UI), JetBrains Mono (terminal and keys) -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for professional modern icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Background grid decoration -->
+    <div class="cyber-grid"></div>
+    <div class="glow-effect top-left"></div>
+    <div class="glow-effect bottom-right"></div>
+
+    <div class="app-container">
+        <!-- Main Header -->
+        <header class="app-header">
+            <div class="header-logo">
+                <i class="fa-solid fa-shield-halved logo-icon"></i>
+                <div class="logo-text">
+                    <h1>SecureText</h1>
+                    <span class="logo-sub">ENCRYPTION SYSTEM v2.4</span>
+                </div>
+            </div>
+            <div class="system-status">
+                <div class="status-indicator">
+                    <span class="pulse-dot"></span>
+                    <span class="status-label">SYSTEMS: ONLINE</span>
+                </div>
+                <div class="clock-display" id="clock-display">19:32:42</div>
+            </div>
+        </header>
+
+        <!-- Main Dashboard Grid -->
+        <main class="dashboard-grid">
+            <!-- Left Panel: Cryptography Workspace -->
+            <section class="panel-workspace card">
+                <div class="card-header border-glow">
+                    <h2 class="panel-title"><i class="fa-solid fa-laptop-code"></i> Cryptography Workspace</h2>
+                    <div class="tab-control">
+                        <button class="tab-btn active" id="tab-encrypt" onclick="switchTab('encrypt')">
+                            <i class="fa-solid fa-lock"></i> Encrypt
+                        </button>
+                        <button class="tab-btn" id="tab-decrypt" onclick="switchTab('decrypt')">
+                            <i class="fa-solid fa-lock-open"></i> Decrypt
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="card-body">
+                    <div class="input-group">
+                        <label for="message-input" id="message-label" class="terminal-label">
+                            <span class="label-prefix">></span> Enter Plaintext Message:
+                        </label>
+                        <textarea id="message-input" placeholder="Type or paste your secret message here..."></textarea>
+                        <div class="textarea-actions">
+                            <span id="char-counter">0 characters</span>
+                            <button class="btn-icon-text" onclick="clearInput()" title="Clear Input">
+                                <i class="fa-solid fa-trash-can"></i> Clear
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Config Grid -->
+                    <div class="config-grid">
+                        <!-- Algorithm Dropdown -->
+                        <div class="config-item">
+                            <label for="algorithm-select" class="terminal-label">Algorithm</label>
+                            <div class="select-wrapper">
+                                <select id="algorithm-select" onchange="handleAlgorithmChange()">
+                                    <option value="AES">AES-CBC (256-bit)</option>
+                                    <option value="DES">DES-CBC (Insecure)</option>
+                                    <option value="RSA">RSA-2048 (Asymmetric)</option>
+                                </select>
+                                <i class="fa-solid fa-chevron-down select-arrow"></i>
+                            </div>
+                        </div>
+
+                        <!-- Key Management Field -->
+                        <div class="config-item key-item">
+                            <label for="key-input" id="key-label" class="terminal-label">Secret Encryption Key (Hex)</label>
+                            <div class="key-input-wrapper">
+                                <textarea id="key-input" placeholder="Auto-generates if left blank" class="code-font"></textarea>
+                                <button class="btn-action-small" id="gen-key-btn" onclick="triggerKeyGen()" title="Generate Key">
+                                    <i class="fa-solid fa-wand-magic-sparkles"></i> Auto Gen
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- RSA keys container (hidden unless RSA selected) -->
+                    <div id="rsa-keypair-display" class="rsa-keys-container hidden">
+                        <div class="key-box">
+                            <div class="key-box-header">
+                                <span>Public Key (PEM)</span>
+                                <button class="btn-copy-mini" onclick="copyValueById('rsa-public-pem')"><i class="fa-regular fa-copy"></i> Copy</button>
+                            </div>
+                            <textarea id="rsa-public-pem" readonly class="code-font" placeholder="Generated RSA Public Key will appear here..."></textarea>
+                        </div>
+                        <div class="key-box">
+                            <div class="key-box-header">
+                                <span>Private Key (PEM)</span>
+                                <button class="btn-copy-mini" onclick="copyValueById('rsa-private-pem')"><i class="fa-regular fa-copy"></i> Copy</button>
+                            </div>
+                            <textarea id="rsa-private-pem" readonly class="code-font" placeholder="Generated RSA Private Key will appear here..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Action buttons -->
+                    <div class="action-bar">
+                        <button class="btn-execute encrypt-theme" id="action-btn" onclick="executeCrypto()">
+                            <i class="fa-solid fa-shield-halved" id="action-btn-icon"></i>
+                            <span id="action-btn-text">Encrypt Message</span>
+                        </button>
+                    </div>
+
+                    <!-- Output Box -->
+                    <div class="input-group margin-top-lg">
+                        <label for="output-display" id="output-label" class="terminal-label">
+                            <span class="label-prefix">></span> Encrypted Output (Base64):
+                        </label>
+                        <div class="output-container">
+                            <textarea id="output-display" readonly placeholder="Output will appear here after calculation..."></textarea>
+                            <div class="output-actions">
+                                <button class="btn-copy" id="copy-output-btn" onclick="copyOutput()" disabled>
+                                    <i class="fa-regular fa-copy"></i> Copy Output
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Panel Sidebar -->
+            <aside class="panel-sidebar">
+                <!-- Card 1: Algorithm Details -->
+                <div class="card sidebar-card flex-grow-0">
+                    <div class="card-header">
+                        <h3 class="panel-title"><i class="fa-solid fa-circle-info"></i> Algorithm Details</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="info-badge success" id="algo-strength-badge">AES-256 SECURED</div>
+                        <div class="algo-stats-grid">
+                            <div class="stat-row">
+                                <span class="stat-name">Security Level:</span>
+                                <span class="stat-value text-green" id="algo-security-level">MILITARY GRADE</span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-name">Block Size:</span>
+                                <span class="stat-value" id="algo-block-size">128 bits</span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-name">Key Size:</span>
+                                <span class="stat-value" id="algo-key-size">256 bits</span>
+                            </div>
+                        </div>
+                        <p class="algo-description" id="algo-description">
+                            Advanced Encryption Standard (AES) in Cipher Block Chaining (CBC) mode. Extremely secure and globally adopted. Features a random 128-bit Initialization Vector to guarantee unique outputs for repeated texts.
+                        </p>
+                        <div class="info-alert warning hidden" id="algo-warning-pane">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                            <span>DES is obsolete. Use for legacy testing only. Subject to brute force attacks.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Interactive Terminal Log -->
+                <div class="card sidebar-card terminal-card">
+                    <div class="card-header flex-row justify-between">
+                        <h3 class="panel-title"><i class="fa-solid fa-terminal"></i> Console Log</h3>
+                        <span class="terminal-title">bash</span>
+                    </div>
+                    <div class="card-body terminal-body">
+                        <div class="terminal-log" id="terminal-log">
+                            <div class="terminal-line"><span class="log-time">[19:32:42]</span> <span class="log-info">[SYS]</span> SecureText terminal initialized.</div>
+                            <div class="terminal-line"><span class="log-time">[19:32:43]</span> <span class="log-info">[SYS]</span> SQLite DB connection online.</div>
+                            <div class="terminal-line"><span class="log-time">[19:32:43]</span> <span class="log-success">[OK]</span> AES, DES, RSA engines responsive.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: SQLite History -->
+                <div class="card sidebar-card history-card">
+                    <div class="card-header flex-row justify-between">
+                        <h3 class="panel-title"><i class="fa-solid fa-history"></i> DB History Log</h3>
+                        <button class="btn-clear-history" onclick="clearHistory()">
+                            <i class="fa-solid fa-circle-xmark"></i> Clear DB
+                        </button>
+                    </div>
+                    <div class="card-body history-body">
+                        <div class="table-container">
+                            <table class="history-table">
+                                <thead>
+                                    <tr>
+                                        <th>Time</th>
+                                        <th>Op</th>
+                                        <th>Algo</th>
+                                        <th>Size</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="history-rows">
+                                    <!-- Dynamic content -->
+                                    <tr class="empty-row"><td colspan="5">No database logs retrieved.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </main>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>

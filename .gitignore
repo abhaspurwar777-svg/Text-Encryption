@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+.env
+venv/
+.venv/
+
+# Database
+*.db
+*.sqlite3
+
+# SSL certs (local only)
+cert.pem
+key.pem
+
+# VS Code extensions and config
+extensions/
+argv.json
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
