@@ -101,9 +101,21 @@ function switchTab(tab) {
     // Update key input label based on selected algorithm and active tab
     updateKeyLabels();
     
+    // Auto-fill RSA key input when switching tabs (if keys were already generated)
+    if (selectedAlgorithm === 'RSA') {
+        if (tab === 'encrypt' && rsaPublicPem.value.trim()) {
+            keyInput.value = rsaPublicPem.value;
+        } else if (tab === 'decrypt' && rsaPrivatePem.value.trim()) {
+            keyInput.value = rsaPrivatePem.value;
+        } else {
+            keyInput.value = '';
+        }
+    }
+    
     // Clear outputs
     outputDisplay.value = '';
     copyOutputBtn.disabled = true;
+
 }
 
 // Handle selected algorithm changes
@@ -154,6 +166,12 @@ function handleAlgorithmChange() {
     if (selectedAlgorithm === 'RSA') {
         rsaKeypairDisplay.classList.remove('hidden');
         keyInput.style.height = '120px';
+        // Auto-fill correct key based on active tab
+        if (activeTab === 'encrypt' && rsaPublicPem.value.trim()) {
+            keyInput.value = rsaPublicPem.value;
+        } else if (activeTab === 'decrypt' && rsaPrivatePem.value.trim()) {
+            keyInput.value = rsaPrivatePem.value;
+        }
     } else {
         rsaKeypairDisplay.classList.add('hidden');
         keyInput.style.height = '42px';
