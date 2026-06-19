@@ -17,6 +17,8 @@ venv/
 # SSL certs (local only)
 cert.pem
 key.pem
+*.pem.bak
+*.bak
 
 # VS Code extensions and config
 extensions/
