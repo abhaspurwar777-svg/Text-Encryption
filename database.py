@@ -1,7 +1,21 @@
 import sqlite3
 import os
 
-DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "securetext.db")
+DB_NAME = "securetext.db"
+DEFAULT_DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), DB_NAME)
+
+# On Vercel serverless environment, the filesystem is read-only.
+# We fallback to /tmp/securetext.db which is writable.
+if os.environ.get("VERCEL") or os.environ.get("AWS_LAMBDA_FUNCTION_NAME"):
+    import shutil
+    DB_PATH = os.path.join("/tmp", DB_NAME)
+    if not os.path.exists(DB_PATH) and os.path.exists(DEFAULT_DB_PATH):
+        try:
+            shutil.copy2(DEFAULT_DB_PATH, DB_PATH)
+        except Exception:
+            pass
+else:
+    DB_PATH = DEFAULT_DB_PATH
 
 def get_connection():
     """
